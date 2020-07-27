@@ -5,6 +5,15 @@
 'use strict';
 const userAgent = require('../../userAgent');
 
+function isSyncBased(service) {
+  return (
+    service === 'sync' ||
+    service === '1b1a3e44c54fbb58' || // Firefox iOS browser
+    service === 'a2270f727f45f648' || // Fenix
+    service === '3c49430b43dfba77'
+  ); // Android Reference browser
+}
+
 module.exports = (log, db, mailer, push, verificationReminders) => {
   return {
     /**
@@ -64,7 +73,7 @@ module.exports = (log, db, mailer, push, verificationReminders) => {
 
       // Our post-verification email is very specific to sync,
       // so only send it if we're sure this is for sync.
-      if (service === 'sync') {
+      if (isSyncBased(service)) {
         const onMobileDevice =
           userAgent(request.headers['user-agent']).deviceType === 'mobile';
         const mailOptions = {
